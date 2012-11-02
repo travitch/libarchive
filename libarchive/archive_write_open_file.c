@@ -88,9 +88,7 @@ file_write(struct archive *a, void *client_data, const void *buff, size_t length
 	mine = client_data;
 	for (;;) {
 		bytesWritten = fwrite(buff, 1, length, mine->f);
-		if (bytesWritten <= 0) {
-			if (errno == EINTR)
-				continue;
+		if (bytesWritten < length && ferror(mine->f)) {
 			archive_set_error(a, errno, "Write error");
 			return (-1);
 		}
